@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import User from '../../Model/User.js';
 import ForgetPasswod from '../../Model/ForgetPasswod.js';
+import _ from  'lodash';
+import bcrypt from 'bcrypt'
 const sendOtpToUser = async (req, res) => {
     try {
         // const { userEmail } = req.body.email;
@@ -67,15 +69,35 @@ const verifyOtp = async (req, res) => {
         return res.status(500).json({ message: "Error verifying OTP. Please try again." });
     }
 }
-const createPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
     try {
-
+      const tokenData = await ForgetPasswod.findOne({ token: req.body.token });
+      if (tokenData) {
+        const { newPassword, confirmPassword } = req.body;
+        if (newPassword == confirmPassword) {
+          const user = await User.findOne({ email: tokenData.email });
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+          const updatedUser = await User.findByIdAndUpdate(user.id, { password: hashedPassword });
+          if (!updatedUser) {
+            return res.status(500).json({ message: "Failed to update password" });
+          }
+          return res.status(200).json({ message: "Password updated successfully" });
+        } else {
+          return res.status(400).json({ message: "Passwords do not match" });
+        }
+      } else {
+        return res.status(401).json({ message: "Invalid token" });
+      }
     } catch (error) {
-
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
     }
-}
+  }
 export default {
     sendOtpToUser,
     verifyOtp,
-    createPassword
+    resetPassword
 }

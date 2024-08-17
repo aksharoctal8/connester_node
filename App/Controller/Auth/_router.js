@@ -17,6 +17,6 @@ route.post("/login", AuthController.login)
 route.get("/profile", AuthMiddlware.verfyToken, ProfileController.profile);
 route.post("/forgetpassword/checkuser", ForgetPasswordController.sendOtpToUser);
 route.post("/forgetpassword/checkotp", ForgetPasswordController.verifyOtp);
-route.post("/forgetpassword/createpassword", ForgetPasswordController.createPassword);
+route.post("/forgetpassword/createpassword", ForgetPasswordController.resetPassword);
 
 export default route
