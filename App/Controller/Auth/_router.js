@@ -1,4 +1,5 @@
 import { Router } from "express";
+import User from "../../Model/User.js";
 import AuthController from './AuthController.js';
 import ProfileController from "./ProfileController.js"
 import AuthMiddlware from "../../Middlware/AuthMiddlware.js"
@@ -12,7 +13,7 @@ const route = Router();
 //     // return res.status(200).json({message:"Google Login",resdata:res})
 // });
 
-route.post("/signup", AuthController.register);
+route.post("/signup",User.uploadImage,AuthController.register);
 route.post("/login", AuthController.login)
 route.get("/profile", AuthMiddlware.verfyToken, ProfileController.profile);
 route.post("/forgetpassword/checkuser", ForgetPasswordController.sendOtpToUser);

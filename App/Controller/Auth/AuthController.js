@@ -1,7 +1,8 @@
 import User from "../../Model/User.js";
 import _ from "lodash";
 import bcrypt from 'bcrypt';
-import { validateLogin } from '../../Request/AuthRequest.js'
+import { validateLogin } from '../../Request/AuthRequest.js';
+
 const register = async (req, res) => {
   try {
     // const { googleToken } = req.body;
@@ -17,8 +18,14 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
     if (password == confirmPassword) {
-      const input = _.pick(req.body, ['name', 'email', 'password']);
+      const image = ''
+      if(req.file){
+        image =await User.imgPath+' / '+req.file.filename
+      }
+      const input = _.pick(req.body, ['name', 'email', 'password','image']);
       input['password'] = await bcrypt.hash(input['password'], 10);
+      input['image'] = image;
+
       const user = await User.create(input);
 
       const response = {
