@@ -3,6 +3,8 @@ import User from '../../Model/User.js';
 import ForgetPasswod from '../../Model/ForgetPasswod.js';
 import _ from  'lodash';
 import bcrypt from 'bcrypt'
+import Joi from 'joi';
+import {validateLogin} from '../../Request/AuthRequest.js'
 const sendOtpToUser = async (req, res) => {
     try {
         // const { userEmail } = req.body.email;
@@ -71,6 +73,10 @@ const verifyOtp = async (req, res) => {
 }
 const resetPassword = async (req, res) => {
     try {
+      const { error } = await validateLogin(req.body.password);
+    if (error) {
+      return res.status(400).send({ error: error.details[0].message });
+    }
       const tokenData = await ForgetPasswod.findOne({ token: req.body.token });
       if (tokenData) {
         const { newPassword, confirmPassword } = req.body;

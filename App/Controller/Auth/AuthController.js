@@ -1,7 +1,7 @@
 import User from "../../Model/User.js";
 import _ from "lodash";
-import bcrypt from 'bcrypt';
-import { validateLogin } from '../../Request/AuthRequest.js';
+import bcrypt from "bcrypt";
+import { validateLogin } from "../../Request/AuthRequest.js";
 
 const register = async (req, res) => {
   try {
@@ -18,13 +18,14 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
     if (password == confirmPassword) {
-      const image = ''
-      if(req.file){
-        image =await User.imgPath+' / '+req.file.filename
+      let img = "";
+      if (req.file) {
+        img = (await User.imgPath) + "/" + req.file.filename;
       }
-      const input = _.pick(req.body, ['name', 'email', 'password','image']);
-      input['password'] = await bcrypt.hash(input['password'], 10);
-      input['image'] = image;
+
+      const input = _.pick(req.body, ["name", "email", "password", "image"]);
+      input["password"] = await bcrypt.hash(input["password"], 10);
+      input["image"] = img;
 
       const user = await User.create(input);
 
@@ -33,12 +34,14 @@ const register = async (req, res) => {
       };
       res.json(response);
     } else {
-      return res.status(400).json({ message: "Confirm password does not match" });
+      return res
+        .status(400)
+        .json({ message: "Confirm password does not match" });
     }
   } catch (error) {
     console.log(error);
   }
-}
+};
 const login = async (req, res) => {
   try {
     console.log(process.env.JWT_PRIVATE_KEY);
@@ -55,14 +58,14 @@ const login = async (req, res) => {
     }
     const jwt_token = await user.generateAuthToken();
     const response = {
-      token: jwt_token
+      token: jwt_token,
     };
     res.json(response);
   } catch (error) {
     console.log(error);
   }
-}
+};
 export default {
   register,
-  login
-}
+  login,
+};

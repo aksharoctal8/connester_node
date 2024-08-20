@@ -5,7 +5,7 @@ const profile = async(req,res)=>{
         const userId = await getUserLoginId(req);
         console.log("User ID:", userId);
         
-        const userProfile = await User.findById(userId).select('_id name email');
+        const userProfile = await User.findById(userId).select('_id name email image');
         console.log("User Profile:", userProfile);
         if (!userProfile) {
           return res.status(404).json({ message: "User not found" });
@@ -15,7 +15,14 @@ const profile = async(req,res)=>{
         console.log(error); 
     }
 }
-
+const deleteProfile = async(req,res)=>{
+    try {       
+       console.log("delete");
+    } catch (error) {
+        console.log(error); 
+    }
+}
 export default {
-    profile
+    profile,
+    deleteProfile
 }
